@@ -58,7 +58,9 @@ function RocketChatBot (botkit, config) {
     bot.send = async function (message, cb) {
       var newMessage = {
         msg: message.text,
-        attachments: message.attachments || []
+        attachments: message.attachments || [],
+        intent: message.intent,
+        confidence: message.confidence
       }
 
       if (bot.connected) {
@@ -74,10 +76,7 @@ function RocketChatBot (botkit, config) {
         } else if (message.type === 'message') {
           await driver.sendToRoomId(newMessage, message.channel)
         }
-        cb()
       }
-      // BOT is not connected
-      cb()
     }
 
     bot.reply = function (src, resp, cb) {
@@ -89,6 +88,8 @@ function RocketChatBot (botkit, config) {
       resp.type = src.type
       resp.user = src.user
       resp.channel = src.channel
+      resp.intent = src.intent
+      resp.confidence = src.confidence
       bot.say(resp, cb)
     }
 
