@@ -1,5 +1,11 @@
 # botkit-rocketchat-connector
 
+## Our Contribution
+
+Configured the code to send confidnece and intent name with response.
+
+# Original Documentation
+
 ## Brief
 A Botkit platform connector for Rocket.Chat
 
