@@ -85,11 +85,25 @@ function RocketChatBot (botkit, config) {
           text: resp
         }
       }
+      var links = null
+      if ("payload" in src.fulfillment.messages[0]) {
+        for (var i = 0; i < src.fulfillment.messages[0].payload.fields.quickReplies.structValue.fields.options.listValue.values.length; ++i) {
+          var linkValue = src.fulfillment.messages[0].payload.fields.quickReplies.structValue.fields.options.listValue.values[i].structValue.fields.text.stringValue;
+          var url = src.fulfillment.messages[0].payload.fields.quickReplies.structValue.fields.options.listValue.values[i].structValue.fields.url.stringValue;
+          var href = "</br><a target='_blank' href='";
+          var href2 = "'>";
+          var href3 = "</a>";
+          var link = href.concat(url, href2, linkValue, href3);
+          links = links ? links.concat("</br>", link) : link
+        }
+      }
       resp.type = src.type
       resp.user = src.user
       resp.channel = src.channel
       resp.intent = src.intent
       resp.confidence = src.confidence
+      var txt = resp.text
+      resp.text = links ? txt.concat(links) : resp.text
       bot.say(resp, cb)
     }
 
