@@ -86,6 +86,7 @@ function RocketChatBot (botkit, config) {
         }
       }
       var links = null
+      var text = null
       if ("payload" in src.fulfillment.messages[0]) {
         for (var i = 0; i < src.fulfillment.messages[0].payload.fields.quickReplies.structValue.fields.options.listValue.values.length; ++i) {
           var linkValue = src.fulfillment.messages[0].payload.fields.quickReplies.structValue.fields.options.listValue.values[i].structValue.fields.text.stringValue;
@@ -94,6 +95,7 @@ function RocketChatBot (botkit, config) {
           var href2 = "'>";
           var href3 = "</a>";
           var link = href.concat(url, href2, linkValue, href3);
+          text = src.fulfillment.messages[0].payload.fields.quickReplies.structValue.fields.text.stringValue;
           links = links ? links.concat("</br>", link) : link
         }
       }
@@ -103,6 +105,7 @@ function RocketChatBot (botkit, config) {
       resp.intent = src.intent
       resp.confidence = src.confidence
       var txt = resp.text
+      txt = text ? txt.concat(text) : txt
       resp.text = links ? txt.concat(links) : resp.text
       bot.say(resp, cb)
     }
