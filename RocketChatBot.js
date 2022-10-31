@@ -111,12 +111,10 @@ function RocketChatBot (botkit, config) {
       resp.text = links ? txt.concat(links) : resp.text
       bot.say(resp, cb)
       src.fulfillment.text = resp.text
-      src.app = 'dialogflow'
+      src.app = 'helpdesk'
       // Saving Data to mongo
       axios.post(saveDocumentEndpoint,src)
-        .then(function (response) {
-          console.log("Saved to Mongo");
-        })
+        .then(function (response) {})
         .catch(function (error) {
           console.log("Mongo-API middleware error");
         });
