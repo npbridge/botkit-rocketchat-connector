@@ -1,29 +1,8 @@
 var Botkit = require('botkit')
 const { driver } = require('@rocket.chat/sdk')
 const utils = require('./utils')
-const mongoose = require('mongoose');
-
-mongoose.connect(
-  process.env.MONGO_URI,
-  { useNewUrlParser: true },
-  function (err) {
-    if (err) throw err;
-  }
-);
-var conn = mongoose.connection;
-
-function saveDocumentToMongo(document) {
-  // Add the document to mongo
-  let doc = {
-    'botResponse': document,
-    'dialogFlow': true,
-    'responsePlatform': 'DialogFlow',
-    'error': false
-  }
-  conn.collection(process.env.MONGO_CHAT_HISTORY_COLLECTION).insertOne(doc);
-}
-
-
+const saveDocumentEndpoint = "http://localhost:7000/mongo/chat"
+const axios = require('axios').default;
 
 function RocketChatBot (botkit, config) {
   var controller = Botkit.core(config || {})
@@ -132,7 +111,15 @@ function RocketChatBot (botkit, config) {
       resp.text = links ? txt.concat(links) : resp.text
       bot.say(resp, cb)
       src.fulfillment.text = resp.text
-      saveDocumentToMongo(src)
+      src.app = 'dialogflow'
+      // Saving Data to mongo
+      axios.post(saveDocumentEndpoint,src)
+        .then(function (response) {
+          console.log("Saved to Mongo");
+        })
+        .catch(function (error) {
+          console.log("Mongo-API middleware error");
+        });
     }
 
     // this function defines the mechanism by which botkit looks for ongoing conversations
